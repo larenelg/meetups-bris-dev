@@ -2,13 +2,13 @@
   "name": "meetups-bris-dev",
   "version": "1.0.0",
   "description": "Tools using the Meetup API and Slack Integration to help the Brisbane Dev Meetup community",
-  "main": "meetupsThisWeek.js",
+  "main": "index.js",
   "dependencies": {
     "group-by": "0.0.1"
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node meetupsThisWeek | pbcopy"
+    "start": "node index | pbcopy"
   },
   "author": "larenelg",
   "license": "MIT"
