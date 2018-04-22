@@ -2,8 +2,8 @@ const http = require('http');
 const { generateParams, formatMeetups } = require('./helpers');
 const token = require('./token.json'); /* file containing Meetup api key e.g. { "key" : "1234abcd" } */
 
-const START_DATE = "2018-04-14";
-const END_DATE = "2018-04-20";
+const START_DATE = "2018-04-21";
+const END_DATE = "2018-04-27";
 const TECH = 292;
 
 let meetupsThisWeek = {};

@@ -30,7 +30,7 @@ function formatMeetups(meetupsJson, startDate, endDate) {
             // if (event.venue) {
             //     venue = ` | _${event.venue.name}, ${event.venue.address_2 ? event.venue.address_2 : event.venue.address_1}_`
             // }
-            console.log(`${event.local_time}\t*${event.name}* by _${event.group.name} (${event.yes_rsvp_count} RSVPs)_${venue} | ${event.short_link}`);
+            console.log(`${event.local_time}\t*${event.name}* by _${event.group.name} (${event.yes_rsvp_count} RSVPs)_${venue} | ${event.link}`);
         });
     });
 }
