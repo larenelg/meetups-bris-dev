@@ -2,8 +2,8 @@ const http = require('http');
 const { generateParams, formatMeetups } = require('./helpers');
 const token = require('./token.json'); /* file containing Meetup api key e.g. { "key" : "1234abcd" } */
 
-const START_DATE = "2018-04-21";
-const END_DATE = "2018-04-27";
+const START_DATE = "2018-04-30";
+const END_DATE = "2018-05-06";
 const TECH = 292;
 
 let meetupsThisWeek = {};
@@ -19,7 +19,7 @@ const params = {
     'lon': '153.021072',
     'lat': '-27.470125',
     'fields': 'short_link',
-    'key': token.key
+    'key': token.meetup.key
 }
 
 const url = `http://api.meetup.com/find/upcoming_events?${generateParams(params)}`;

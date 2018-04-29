@@ -1,8 +1,42 @@
+const https = require('https');
 const groupBy = require('group-by');
+const tokens = require('./token.json');
 
 const DAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 function _dayOfTheWeek(date) {
     return DAY[(new Date(date)).getDay()];
+}
+
+async function _createShortUrl(longUrl) {
+    let urlEncodedLongUrl = encodeURIComponent(longUrl);
+    let url = `${tokens.bitly.apiAddress}/v3/shorten?access_token=${tokens.bitly.key}&longUrl=${urlEncodedLongUrl}&format=txt`;
+    var shortUrl = 'NA';
+
+    return new Promise((resolve, reject) => {
+        https.get(url, (res) => {
+            const { statusCode } = res;
+    
+            let error;
+            if (statusCode !== 200) {
+                error = new Error('Request Failed.\n' +
+                                `Status Code: ${statusCode}`);
+            }
+    
+            if (error) {
+                console.error(error.message);
+                // consume response data to free up memory
+                res.resume();
+                reject(error);
+            }
+    
+            res.setEncoding('utf8');
+            let rawData = '';
+            res.on('data', (chunk) => { rawData += chunk; });
+            res.on('end', () => {
+                resolve(rawData); // short
+            });
+        });
+    });
 }
 
 function generateParams(params) {
@@ -11,7 +45,7 @@ function generateParams(params) {
     return urlParams.substring(1); /* remove first '&' */
 }
 
-function formatMeetups(meetupsJson, startDate, endDate) {
+async function formatMeetups(meetupsJson, startDate, endDate) {
     const city = meetupsJson.city.city;
     const totalMembersInCity = meetupsJson.city.member_count;
     
@@ -22,17 +56,25 @@ function formatMeetups(meetupsJson, startDate, endDate) {
     const eventsGroupdByDate = groupBy(eventsThisWeek, 'local_date');
     const dates = Object.keys(eventsGroupdByDate);
     
-    dates.forEach(date => {
-        console.log('\n');    
-        console.log(`${_dayOfTheWeek(date)}, _${date}_`);
-        eventsGroupdByDate[date].forEach(event => {
-            let venue = "";
-            // if (event.venue) {
-            //     venue = ` | _${event.venue.name}, ${event.venue.address_2 ? event.venue.address_2 : event.venue.address_1}_`
-            // }
-            console.log(`${event.local_time}\t*${event.name}* by _${event.group.name} (${event.yes_rsvp_count} RSVPs)_${venue} | ${event.link}`);
-        });
-    });
+    await _asyncForEach(dates, async date => await _outputEvents(date, eventsGroupdByDate));
+}
+
+async function _outputEvents(date, eventsGroupdByDate) {
+    console.log('\n');
+    console.log(`${_dayOfTheWeek(date)}, _${date}_`);
+    await _asyncForEach(eventsGroupdByDate[date], async event => await _outputEvent(event));
+}
+
+async function _outputEvent(event) {
+    const venue = ""; // venue name is too long
+    const shortUrl = await _createShortUrl(event.link);
+    console.log(`${event.local_time}\t*${event.name}* by _${event.group.name} (${event.yes_rsvp_count} RSVPs)_${venue} | ${shortUrl}`);
+}
+
+async function _asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+        await callback(array[index], index, array)
+    }
 }
 
 module.exports = {
