@@ -50,7 +50,7 @@ async function formatMeetups(meetupsJson, startDate, endDate) {
     const totalMembersInCity = meetupsJson.city.member_count;
     
     console.log(`:pizza: *MEETUPS FOR THE WEEK* :pizza: ${startDate} to ${endDate}`);
-    console.log(`\t\t${city} | Tech | ${totalMembersInCity} total members`);
+    console.log(`\t\t${city} | Tech | \`https://github.com/larenelg/meetups-bris-dev\``);
     
     const eventsThisWeek = meetupsJson.events;
     const eventsGroupdByDate = groupBy(eventsThisWeek, 'local_date');
@@ -68,7 +68,7 @@ async function _outputEvents(date, eventsGroupdByDate) {
 async function _outputEvent(event) {
     const venue = ""; // venue name is too long
     const shortUrl = await _createShortUrl(event.link);
-    console.log(`${event.local_time}\t*${event.name}* by _${event.group.name} (${event.yes_rsvp_count} RSVPs)_${venue} | ${shortUrl}`);
+    console.log(`${event.local_time}\t*${event.name}* by _${event.group.name} (${event.yes_rsvp_count} RSVPs)_${venue} | ${shortUrl.trim()}`);
 }
 
 async function _asyncForEach(array, callback) {
